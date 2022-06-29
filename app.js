@@ -9,8 +9,15 @@ app.use((req, res, next) => {
   next()
 })
 
+// add router
 app.use('/todos', router)
 
+// handle 404
+app.use((req, res, next) => {
+  res.status(404).send('404 Not Found.')
+})
+
+// handle error
 app.use((err, req, res, next) => {
   res.status(500).json({
     error: err.message
