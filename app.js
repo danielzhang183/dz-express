@@ -4,6 +4,10 @@ const { getDb, saveDb } = require('./db')
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded())
+app.use((req, res, next) => {
+  console.log(req.method, req.url, Date.now())
+  next()
+})
 
 app.get('/todos', async (req, res) => {
   try {
