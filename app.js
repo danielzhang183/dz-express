@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDb, saveDb } = require('./db')
+const router = require('./router')
 
 const app = express();
 app.use(express.json())
@@ -9,82 +9,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.get('/todos', async (req, res) => {
-  try {
-    const db = await getDb()
-    res.status(200).json(db.todos)
-  } catch (err) {
-    return res.status(500).json({
-      error: err.message
-    })
-  }
-});
-
-app.get('/todos/:id', async (req, res) => {
-  try {
-    const db = await getDb()
-    const todo = db.todos.find(({ id }) => id === Number(req.params.id))
-    todo
-      ? res.status(200).json(todo)
-      : res.status(404).end()
-  } catch (err) {
-    return res.status(500).json({
-      error: err.message
-    })
-  }
-});
-
-app.post('/todos', async (req, res) => {
-  try {
-    const todo = req.body
-    if (!todo.title) {
-      return res.status(422).json({
-        error: 'The field title is required'
-      })
-    }
-    const db = await getDb()
-    const lastTodo = db.todos[db.todos.length - 1]
-    todo.id = lastTodo ? lastTodo.id + 1 : 1
-    db.todos.push(todo)
-    await saveDb(db)
-    res.status(200).json(todo)
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    })
-  }
-});
-
-app.patch('/todos/:id', async (req, res) => {
-  try {
-    const newTodo = req.body
-    const db = await getDb()
-    const todo = db.todos.find(({ id }) => id === Number(req.params.id))
-    if (!todo) return res.status(404).end()
-    Object.assign(todo, newTodo)
-    await saveDb(db)
-    res.status(200).json(todo)
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    })
-  }
-});
-
-app.delete('/todos/:id', async (req, res) => {
-  try {
-    const db = await getDb()
-    const index = db.todos.findIndex(({ id }) => id === Number(req.params.id))
-    if (index === -1) return res.status(404).end()
-    db.todos.splice(index, 1)
-    await saveDb(db)
-    res.status(204).end()
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    })
-  }
-});
+app.use('/todos', router)
 
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000/');
