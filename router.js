@@ -3,32 +3,26 @@ const { getDb, saveDb } = require('./db')
 
 const router = express.Router()
 
-router.get('', async (req, res) => {
+router.get('', async (req, res, next) => {
   try {
     const db = await getDb()
     res.status(200).json(db.todos)
   } catch (err) {
-    return res.status(500).json({
-      error: err.message
-    })
+    next(err)
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const db = await getDb()
     const todo = db.todos.find(({ id }) => id === Number(req.params.id))
-    todo
-      ? res.status(200).json(todo)
-      : res.status(404).end()
+    todo ? res.status(200).json(todo) : res.status(404).end()
   } catch (err) {
-    return res.status(500).json({
-      error: err.message
-    })
+    next(err)
   }
 });
 
-router.post('', async (req, res) => {
+router.post('', async (req, res, next) => {
   try {
     const todo = req.body
     if (!todo.title) {
@@ -43,13 +37,11 @@ router.post('', async (req, res) => {
     await saveDb(db)
     res.status(200).json(todo)
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    })
+    next(err)
   }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   try {
     const newTodo = req.body
     const db = await getDb()
@@ -59,13 +51,11 @@ router.patch('/:id', async (req, res) => {
     await saveDb(db)
     res.status(200).json(todo)
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    })
+    next(err)
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const db = await getDb()
     const index = db.todos.findIndex(({ id }) => id === Number(req.params.id))
@@ -74,9 +64,7 @@ router.delete('/:id', async (req, res) => {
     await saveDb(db)
     res.status(204).end()
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    })
+    next(err)
   }
 });
 

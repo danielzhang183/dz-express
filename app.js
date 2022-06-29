@@ -11,6 +11,12 @@ app.use((req, res, next) => {
 
 app.use('/todos', router)
 
+app.use((err, req, res, next) => {
+  res.status(500).json({
+    error: err.message
+  })
+})
+
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000/');
 });
