@@ -1,16 +1,1 @@
-{
-  "todos": [
-    {
-      "id": 1,
-      "title": "Work"
-    },
-    {
-      "id": 2,
-      "title": "Eat"
-    },
-    {
-      "id": 3,
-      "title": "Sleep"
-    }
-  ]
-}
+{"todos":[{"id":1,"title":"Work"},{"id":2,"title":"Eat"},{"id":3,"title":"Sleep"}]}
